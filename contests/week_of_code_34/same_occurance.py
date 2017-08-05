@@ -1,91 +1,109 @@
-# 3/30 tests passed
+# 25/30 tests passed
+# https://www.hackerrank.com/contests/w34/challenges/same-occurrence
 
+#!/bin/python3
 
-def calc_sub(temp_arr):
-    # print temp_arr
-    target_sum = 0
-    sub_arr_count = 0
-
-    temp_arr_len = len(temp_arr)
-    temp_sum = 0
-
-    for i in xrange(temp_arr_len):
-        if temp_arr[i] == 0:
-            continue
-
-        temp_sum += temp_arr[i]
-
-        if temp_sum == target_sum:
-            sub_arr_count += 1
-
-    # print sub_arr_count
-    return sub_arr_count
-
-
-def calc_answer(arr, x, y, n):
-    temp_arr = [0] * n
-    zero_positions = []
-
-    total_sum = 0
-
-    for i in xrange(n):
-        if arr[i] == x:
-            temp_arr[i] = 1
-        elif arr[i] == y:
-            temp_arr[i] = -1
-        else:
-            temp_arr[i] = 0
-
-    for i in xrange(n):
-        total_sum += calc_sub(temp_arr[i:])
-        if temp_arr[i] == 0:
-            zero_positions.append(i)
-
-    # print "from subs", total_sum
-
-    # print "zero_positions", zero_positions
-
-    zeros_len = len(zero_positions)
-    count = 1
-    for i in xrange(zeros_len):
-        j = i + 1
-        if j < zeros_len:
-            if zero_positions[i] + 1 == zero_positions[j]:
-                count += 1
-                continue
-
-        # print "count", count
-        total_sum += count * (count + 1) / 2
-        count = 1
-
-    return total_sum
-
+import sys
 
 if __name__ == "__main__":
-    n, q = raw_input().strip().split(' ')
+    n, q = input().strip().split(' ')
     n, q = [int(n), int(q)]
-    arr = map(int, raw_input().strip().split(' '))
-
-    arr_set = set(arr)
-
-    answers = {}
-
-    for a0 in xrange(q):
-        x, y = raw_input().strip().split(' ')
-        x, y = [int(x), int(y)]
-        # Write Your Code Here
-
+    arr = list(map(int, input().strip().split(' ')))
+    postn = {}
+    arr_elements, key_set = set([]), set([])
+    ans_history = {}
+    for i in range(0,n):
         try:
-            print answers[(x, y)]
-            continue
+            postn[arr[i]].append(i)
         except KeyError:
-            if x not in arr_set and y not in arr_set:
-                ans = n * (n + 1) / 2
-                answers[(x, y)] = ans
-                answers[(y, x)] = ans
+            postn[arr[i]] = [i]
+        if arr[i] not in arr_elements:
+            arr_elements.add(arr[i])
+    #print (postn)
+    #print (arr_elements)
+    
+    for a0 in range(q):
+        p, q = input().strip().split(' ')
+        y, x = max(int(p), int(q)), min(int(p), int(q))
+        key = str(x) + '-' + str(y)
+        # Write Your Code Here
+        if key in key_set:
+            ans = ans_history[key]
+        elif ((x == y) or ((x not in arr_elements) and (y not in arr_elements))):
+            ans = int (n * (n+1)/2)
+            key_set.add(key)
+        elif ((x in arr_elements) and (y not in arr_elements)):
+            arr_temp = sorted(list(set(postn[x])))
+            tt = len(arr_temp)
+            if tt == 1:
+                k = arr_temp[0]
+                ans = int(k * (k+1)/2) + int((n-k-1)*(n-k)/2)
             else:
-                ans = calc_answer(arr, x, y, n)
-                answers[(x, y)] = ans
-                answers[(y, x)] = ans
-
-            print ans
+                k = arr_temp[0]
+                ans = int(k * (k+1)/2)
+                for i in range(1,tt):
+                    k = arr_temp[i] - arr_temp[i-1]
+                    ans += int(k*(k-1)/2)
+                k = n - arr_temp[tt - 1]
+                ans += int(k*(k-1)/2)
+            key_set.add(key)
+        elif ((y in arr_elements) and (x not in arr_elements)):
+            arr_temp = sorted(list(set(postn[y])))
+            tt = len(arr_temp)
+            #print (arr_temp)
+            if tt == 1:
+                k = arr_temp[0]
+                ans = int(k * (k+1)/2) + int((n-k-1)*(n-k)/2)
+            else:
+                k = arr_temp[0]
+                ans = int(k * (k+1)/2)
+                for i in range(1,tt):
+                    #print (i)
+                    k = arr_temp[i] - arr_temp[i-1]
+                    ans += int(k*(k-1)/2)
+                k = n - arr_temp[tt - 1]
+                ans += int(k*(k-1)/2)
+            key_set.add(key)
+        else:
+            sum_ref = {}
+            set_x, set_y = set([]), set([])
+            if x in arr_elements:
+                for i in postn[x]:
+                    sum_ref[i] = 1
+                set_x = set(postn[x])
+            if y in arr_elements:
+                for i in postn[y]:
+                    sum_ref[i] = -1
+                set_y = set(postn[y])
+            arr_temp = sorted(list(set_x) + list(set_y))
+            #print(sum_ref)
+            sum_arr = {}
+            sum_elements = set([])
+            sum_temp,ans = 0, 0
+            sum_arr[0] = arr_temp[0] 
+            sum_elements.add(sum_temp)
+            tt = len(arr_temp)
+            for i in range(1,tt):
+                sum_temp += sum_ref[arr_temp[i-1]]
+                if sum_temp not in sum_elements:
+                    sum_elements.add(sum_temp)
+                    sum_arr[sum_temp] = arr_temp[i] - arr_temp[i-1]
+                else:
+                    sum_arr[sum_temp] += arr_temp[i] - arr_temp[i-1] 
+                
+            sum_temp += sum_ref[arr_temp[tt - 1]]
+            if sum_temp not in sum_elements:
+                sum_elements.add(sum_temp)
+                sum_arr[sum_temp] = n - arr_temp[tt - 1] 
+            else:
+                sum_arr[sum_temp] += n - arr_temp[tt - 1] 
+            #print (sum_arr)
+            for i in sum_elements:
+                #print (i)
+                if i == 0:
+                    ans += int(sum_arr[i] * (sum_arr[i] + 1)/2)
+                else:
+                    ans += int(sum_arr[i] * (sum_arr[i] - 1)/2)
+            key_set.add(key)
+        print (ans)
+        ans_history[key] = ans

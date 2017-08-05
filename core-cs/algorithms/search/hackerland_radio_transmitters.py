@@ -1,57 +1,34 @@
+#https://www.hackerrank.com/challenges/hackerland-radio-transmitters
 
+#!/bin/python3
 
-n, k = map(int, raw_input().strip().split(' '))
+import sys
+from collections import deque
 
-houses_all = map(int, raw_input().strip().split(' '))
-houses = list(set(houses_all))
+n,k = input().strip().split(' ')
+n,k = [int(n),int(k)]
+x = [int(x_temp) for x_temp in input().strip().split(' ')]
 
-count = 0
-part = 1
+#to remove duplicates and sort
+x= list(set(x))
+x.sort()
 
-while True:
+# setting initial parameters
+count = 1
+a0 = x[0]
+coverage_end = a0 + 2*k
+tower_postn = a0 + k
 
-    last_part = True
-
-    if part & 1:
-        # print "IF block", part
-        houses.sort()
-        lower, higher = houses[0], houses[0] + k
-
-        for i in xrange(len(houses)):
-            # print i, len(houses)
-            if lower <= houses[i] <= higher:
-                # tower = houses[i]
-                pass
-            else:
-                count += 1
-                houses = list(houses[i - 1:])
-                last_part = False
-                break
-
-    else:
-        # print "ELSE block", part
-        houses.sort()
-        lower, higher = houses[0], houses[0] + k
-
-        for i in xrange(len(houses)):
-            # print i, len(houses)
-            if lower <= houses[i] <= higher:
-                # tower = houses[i]
-                pass
-            else:
-                # count += 1
-                houses = list(houses[i:])
-                last_part = False
-                break
-
-    if len(houses) == 0:
-        break
-    elif last_part:
-        # print "Hello", part
-        if part & 1:
-            count += 1
-        break
-
-    part += 1
-
-print count
+# sequentially check for tower position and coverage-end 
+for i in x:
+    if i > tower_postn:
+        coverage_end = a0 + k 
+        tower_postn = a0 + 2*k + 1
+        
+    if i > coverage_end:
+        coverage_end = i + 2*k
+        tower_postn = i + k
+        count += 1
+        
+    a0 = i
+print (count)

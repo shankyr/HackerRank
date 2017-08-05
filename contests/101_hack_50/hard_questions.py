@@ -1,12 +1,19 @@
+#https://www.hackerrank.com/contests/101hack50/challenges/hard-questions
+#!/bin/python3
 
-n = int(raw_input().strip())
+import sys
 
-vincent = raw_input().strip()
-catherine = raw_input().strip()
+def maxScoreOfVincent(n, s, t):
+    result = n
+    for a0 in range(n):
+        if (s[a0]==t[a0] or s[a0] == '.'):
+            result -= 1
+    return result
+    # Complete this function
 
-answer = 0
-for i in xrange(n):
-    if vincent[i] != catherine[i] and vincent[i] != '.':
-        answer += 1
-
-print answer
+#  Return the maximum score of Vincent.
+n = int(input().strip())
+s = input().strip()
+t = input().strip()
+result = maxScoreOfVincent(n, s, t)
+print(result)

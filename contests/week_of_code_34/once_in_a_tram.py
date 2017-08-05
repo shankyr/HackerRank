@@ -1,34 +1,26 @@
 # 7/7 tests passed
+# https://www.hackerrank.com/contests/w34/challenges/once-in-a-tram
 
+
+#!/bin/python3
+
+import sys
 
 def onceInATram(x):
     # Complete this function
-    # print x
-
-    first_3 = x / 1000
-    last_3 = x % 1000
-
-    # print first_3, last_3
-
-    sum_first_3 = sum(map(int, list(str(first_3))))
-    last_3 += 1
-    sum_last_3 = sum(map(int, list(str(last_3))))
-
-    while sum_last_3 != sum_first_3:
-        last_3 += 1
-
-        if last_3 < 1000:
-            sum_last_3 = sum(map(int, list(str(last_3))))
-        else:
-            last_3 = 0
-            sum_last_3 = sum(map(int, list(str(last_3))))
-            first_3 += 1
-            sum_first_3 += 1
-
-    return first_3 * 1000 + last_3
-
-
+    last_3_digits, first_3_digits  = 0, 1
+    while (last_3_digits != first_3_digits):
+        x += 1
+        z, last_3_digits, first_3_digits  = x, 0, 0
+        for i in range (1,4):
+            last_3_digits += z % 10
+            z = int(z/10)
+        for i in range (1,4):        
+            first_3_digits += z % 10
+            z = int(z/10)
+    return (x)
+            
 if __name__ == "__main__":
-    x = int(raw_input().strip())
+    x = int(input().strip())
     result = onceInATram(x)
-    print result
+    print(result)

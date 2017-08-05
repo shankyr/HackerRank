@@ -1,48 +1,33 @@
-from collections import Counter
+#https://www.hackerrank.com/contests/101hack50/challenges/even-and-odd-boxes
+#!/bin/python3
 
-q = int(raw_input().strip())
+import sys
 
-for q0 in xrange(q):
-    n = int(raw_input().strip())
-    arr = map(int, raw_input().strip().split(' '))
-
-    invalid_boxes = []
-    max_picks = 0
-
-    for i in xrange(n):
-
-        # index/position is odd; so value should be odd
-        if i & 1:
-            if not (arr[i] & 1):
-                invalid_boxes.append(arr[i])
-
-            max_pick = arr[i] - 1 if arr[i] >= 2 else 0
-            max_picks += max_pick
-
-        # index/position is even; so value should be even
-        else:
-            if arr[i] & 1:
-                invalid_boxes.append(arr[i])
-
-            max_pick = arr[i] - 2 if arr[i] >= 3 else 0
-            max_picks += max_pick
-
-    len_invalid_boxes = len(invalid_boxes)
-
-    if len_invalid_boxes & 1:
-        print -1
+def minimumChocolateMoves(n, X):
+    # Complete this function
+    count, count_1, count_2 = 0, 0, 0
+    if ((n % 2 == 0 and (2 * sum(X)) < (3 * n)) or
+        (n % 2 == 1 and (2 * sum(X)) < (3*n + 1)) or
+        ((n % 4 == 0 or n % 4 == 1) and sum(X) % 2 == 1) or
+        ((n % 4 == 2 or n % 4 == 3) and sum(X) % 2 == 0)):
+        return -1
     else:
-        invalid_boxes_counter = Counter(invalid_boxes)
-
-        len_1_boxes = invalid_boxes_counter[1]
-        len_not_1_boxes = len_invalid_boxes - len_1_boxes
-
-        if len_1_boxes <= len_not_1_boxes:
-            len_remaining_not_1_boxes = len_not_1_boxes - len_1_boxes
-            print len_1_boxes + (len_remaining_not_1_boxes / 2)
-
+        for a0 in range(n):
+            if (a0 % 2 != X[a0] % 2):
+                if X[a0] == 1:
+                    count_1 += 1
+                else:
+                    count_2 += 1
+                count += 1
+        if count_1 > count_2:
+            return int (count/2 + (count_1 - count_2)/2)
         else:
-            if len_1_boxes <= max_picks:
-                print len_1_boxes
-            else:
-                print -1
+            return int(count/2)
+
+#  Return the minimum number of chocolates that need to be moved, or -1 if it's impossible.
+q = int(input().strip())
+for a0 in range(q):
+    n = int(input().strip())
+    X = list(map(int, input().strip().split(' ')))
+    result = minimumChocolateMoves(n, X)
+    print(result)
