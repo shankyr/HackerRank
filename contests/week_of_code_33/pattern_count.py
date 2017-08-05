@@ -1,14 +1,27 @@
-# all tests passed
+#!/bin/python3
 
-import re
+import sys
 
-
-def pattern_count(s):
+def patternCount(s):
+    seq, count = '0', 0
+    for i, value in enumerate(s):
+        if value == '1':
+            if seq == '10':
+                count+=1 
+            seq = '1'
+        elif value == '0':
+            if (seq == '1' or seq == '10'):
+                seq = '10'
+            else:
+                seq = '0'
+        else:
+            seq = '0'
+        # print (value + " " + seq)
+    return count
     # Complete this function
-    return len(re.findall("1(?=(0+)1)", s))
 
-q = int(raw_input().strip())
-for a0 in xrange(q):
-    s = raw_input().strip()
-    result = pattern_count(s)
+q = int(input().strip())
+for a0 in range(q):
+    s = input().strip()
+    result = patternCount(s)
     print(result)
